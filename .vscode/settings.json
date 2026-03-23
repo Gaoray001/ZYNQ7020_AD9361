@@ -1,0 +1,116 @@
+{
+  // -----------------------------
+  // 0) 学习模式：关闭“行内预测补全/自动提示”
+  // -----------------------------
+  "editor.inlineSuggest.enabled": true,
+
+  // 你目前这里是 on：表示仍会弹普通建议（不是灰色行内预测）
+  // 如果你想“完全不提示”，把 comments/strings/other 改成 "off"
+  "editor.quickSuggestions": {
+    "comments": "on",
+    "strings": "on",
+    "other": "on"
+  },
+
+  // true：输入 . / ( 等触发字符会弹建议；如果你也不想自动弹，改 false
+  "editor.suggestOnTriggerCharacters": true,
+
+  // -----------------------------
+  // 1) 性能关键：不要监视/搜索大目录（否则越用越卡）
+  // -----------------------------
+  "files.exclude": {
+    "**/.git/**": true,
+    "**/.vscode/**": true,
+
+    "**/Prj/**": true,
+    "**/Sdk/**": true,
+
+    "**/Rtl/IP/**": true,
+
+    // ip_repo 你可能需要看 component.xml，所以不隐藏（可按需改 true）
+    "**/Rtl/ip_repo/**": false,
+
+    "**/Rtl/HDL/**/.Xil/**": true,
+    "**/Rtl/**/.Xil/**": true,
+
+    "**/*.jou": true,
+    "**/*.log": true,
+    "**/*.str": true,
+    "**/*.tmp": true,
+
+    "**/*.zip": true,
+    "**/*.tar": true,
+    "**/*.gz": true,
+
+    // bit/bin 你可能要看/拷贝，所以不隐藏
+    "**/*.bit": false,
+    "**/*.bin": false
+  },
+
+  "search.exclude": {
+    "**/.git/**": true,
+    "**/.vscode/**": true,
+
+    "**/Prj/**": true,
+    "**/Sdk/**": true,
+
+    "**/Rtl/IP/**": true,
+    "**/Rtl/**/.Xil/**": true,
+
+    "**/*.jou": true,
+    "**/*.log": true,
+    "**/*.str": true,
+    "**/*.tmp": true
+  },
+
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/.vscode/**": true,
+
+    "**/Prj/**": true,
+    "**/Sdk/**": true,
+
+    "**/Rtl/IP/**": true,
+    "**/Rtl/**/.Xil/**": true,
+
+    "**/*.jou": true,
+    "**/*.log": true,
+    "**/*.str": true,
+    "**/*.tmp": true
+  },
+
+  // -----------------------------
+  // 2) Python：轻量分析（只分析打开文件，避免后台拖死）
+  // -----------------------------
+  "python.defaultInterpreterPath": "${workspaceFolder}/Py/.venv/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "python.analysis.typeCheckingMode": "off",
+
+  // -----------------------------
+  // 3) 文件关联：让 VSCode 正确识别 sv / tcl / xdc
+  // -----------------------------
+  "files.associations": {
+    "*.sv": "systemverilog",
+    "*.v": "verilog",
+    "*.vh": "verilog",
+    "*.tcl": "tcl",
+    "*.xdc": "tcl"
+  },
+
+  // -----------------------------
+  // 4) 编辑体验：适合 RTL/TCL 的常用设置
+  // -----------------------------
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.renderWhitespace": "boundary",
+  "editor.minimap.enabled": false,
+
+  // 关闭自动格式化（学习/写RTL时更可控；需要再开）
+  "editor.formatOnSave": false,
+
+  // -----------------------------
+  // 5) 扩展推荐：不弹推荐（你之前也想关）
+  // -----------------------------
+  "extensions.ignoreRecommendations": true
+}

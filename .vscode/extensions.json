@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "tamasfe.even-better-toml",
+    "rafamel.subtle-brackets",
+    "slevesque.vscode-hexdump",
+    "mshr-h.veriloghdl",
+    "mechatroner.rainbow-csv",
+    "bitwisecook.tcl"
+  ]
+}
