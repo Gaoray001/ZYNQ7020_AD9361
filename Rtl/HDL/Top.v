@@ -146,7 +146,7 @@ module Top (
     .i_fmc_spi_miso                     (i_fmc_spi_miso            ),
     // usr_Interface
     .AD9361_UserClk_40M_i               (ad_9361_data_clk_40mhz   ),//i
-    .ad_9361_data_clk_40mhz_rst         (g_clock_mmcm_locked       ),//i
+    .ad_9361_data_clk_40mhz_rst         (~g_clock_mmcm_locked       ),//i
     .AD9361_clk_40Mhz                   (AD9361_clk_40Mhz          ),//o
     .AD9361_rst                         (AD9361_rst                ),//o
     
@@ -180,7 +180,7 @@ module Top (
 	.probe0({
         AD9361_Data_Rx_SYNC_CH1,
         AD9361_Data_Rx_SYNC_CH2
-    }) // input wire [63:0] probe0
+    }) // input wire [63:0] probe0 
 );
 
 

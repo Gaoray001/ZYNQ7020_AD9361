@@ -323,7 +323,7 @@ module AD9361_Top(
         
     AD9361_InterFace u_AD9361_InterFace(
         .clk                    ( AD9361_UserClk_40M_i          ),      
-        .rst                    ( ~ad_9361_data_clk_40mhz_rst         ),   
+        .rst                    ( ad_9361_data_clk_40mhz_rst         ),   
 
         .AD9361_Valid           ( AD9361_Valid          ),              
         .AD9361_LoFreq_Rx       ( AD9361_LoFreq_Rx      ),                  
