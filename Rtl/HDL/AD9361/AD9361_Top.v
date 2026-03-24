@@ -48,18 +48,10 @@ module AD9361_Top(
     output          o_fmc_spi_clk       ,
     output          o_fmc_spi_mosi      ,
     input           i_fmc_spi_miso      ,
+    
 //usr_Interface 
     input  wire    AD9361_UserClk_40M_i       ,
     input  wire    AD9361_UserClk_40M_rst_i   ,
-    
-    
-    
-    output         AD9361_clk_40Mhz           ,
-    output         AD9361_rx_data_clk_160Mhz  ,
-    output         AD9361_rst                 ,
-
-
-
 //usr_Ctrl_Interface 
     input           AD9361_User_Valid_i        ,       //AD9361接口控制触发标志
     input [31:0]    AD9361_User_LoFreq_Rx_i    ,       //AD9361接口控制-接收本振   KHz
@@ -74,10 +66,11 @@ module AD9361_Top(
     input [15:0]    AD9361_User_txATT_CH1_i    ,       //AD9361接口控制-发送衰减通道1  db
 
 //usr_Data_Interface 
-    output [31:0]   AD9361_Data_Rx_SYNC_CH1,
-    output [31:0]   AD9361_Data_Rx_SYNC_CH2,  
-    input  [31:0]   AD9361_Data_Tx_SYNC_CH1,
-    input  [31:0]   AD9361_Data_Tx_SYNC_CH2
+
+    output [31:0]   AD9361_User_Data_RxSYNC_CH1_o,
+    output [31:0]   AD9361_User_Data_RxSYNC_CH2_o,  
+    input  [31:0]   AD9361_User_Data_TxSYNC_CH1_i,
+    input  [31:0]   AD9361_User_Data_TxSYNC_CH2_i
     );
 
     localparam CLK_PARAM = 10_000_000 ;
@@ -112,7 +105,7 @@ module AD9361_Top(
     //     .I                  (       l_clk_bufin         )  // 1-bit input: Clock input
     // ); 
     assign l_clk = l_clk_bufin;
-    assign AD9361_rx_data_clk_160Mhz = l_clk;
+    // assign AD9361_rx_data_clk_160Mhz = l_clk;
 
 
 
@@ -265,8 +258,8 @@ module AD9361_Top(
     );
 
 
-    assign AD9361_clk_40Mhz = l_clk_div4;
-    assign AD9361_rst = l_clk_div4_rst_n;
+    // assign AD9361_clk_40Mhz = l_clk_div4;
+    // assign AD9361_rst = l_clk_div4_rst_n;
 
     //-----------------------------------------------------------------------------//
     // AD_Data_Sync
@@ -282,11 +275,12 @@ module AD9361_Top(
     .AD9361_Data_Tx_CH2                 (AD9361_Data_Tx_CH2        ),//o
 
     .AD9361_UserClk_40M_i               (AD9361_UserClk_40M_i    ),
-    .AD9361_User_Data_Rx_SYNC_CH1_o     (AD9361_Data_Rx_SYNC_CH1   ),//O
-    .AD9361_User_Data_Rx_SYNC_CH2_o     (AD9361_Data_Rx_SYNC_CH2   ),//O
-    .AD9361_User_Data_Tx_SYNC_CH1_i     (AD9361_Data_Tx_SYNC_CH1   ),//i
-    .AD9361_User_Data_Tx_SYNC_CH2_i     (AD9361_Data_Tx_SYNC_CH2   ) //i
+    .AD9361_User_Data_Rx_SYNC_CH1_o     (AD9361_User_Data_RxSYNC_CH1_o   ),//O
+    .AD9361_User_Data_Rx_SYNC_CH2_o     (AD9361_User_Data_RxSYNC_CH2_o   ),//O
+    .AD9361_User_Data_Tx_SYNC_CH1_i     (AD9361_User_Data_TxSYNC_CH1_i   ),//i
+    .AD9361_User_Data_Tx_SYNC_CH2_i     (AD9361_User_Data_TxSYNC_CH2_i   ) //i
     );
+
 
     assign dac_data_i0 = AD9361_Data_Tx_CH1[15: 0];
     assign dac_data_q0 = AD9361_Data_Tx_CH1[31:16];
@@ -306,11 +300,10 @@ module AD9361_Top(
     ila_64Xbit ila_txpre_data (
 	.clk(AD9361_UserClk_40M_i), // input wire clk
 	.probe0({
-        AD9361_Data_Tx_SYNC_CH1,
-        AD9361_Data_Tx_SYNC_CH2
+        AD9361_User_Data_TxSYNC_CH1_i,
+        AD9361_User_Data_TxSYNC_CH2_i
     }) // input wire [63:0] probe0
 );
-
 
     //-----------------------------------------------------------------------------//
     // AD9361_InterFace 9361控制接口
@@ -328,30 +321,30 @@ module AD9361_Top(
     wire  [15:0]  Tx1_ATT_data; 
         
     AD9361_InterFace u_AD9361_InterFace(
-        .clk                    ( AD9361_UserClk_40M_i          ),      
-        .rst                    ( AD9361_UserClk_40M_rst_i         ),   
-
-        .AD9361_Valid           (AD9361_User_Valid_i          ),              
-        .AD9361_LoFreq_Rx       (AD9361_User_LoFreq_Rx_i      ),                  
-        .AD9361_LoFreq_Tx       (AD9361_User_LoFreq_Tx_i      ),                  
-        .AD9361_rxGain_CH0      (AD9361_User_rxGain_CH0_i     ),                  
-        .AD9361_rxGain_CH1      (AD9361_User_rxGain_CH1_i     ),                  
-
-        .AD9361_txATT_Valid     ( AD9361_User_txATT_Valid_i   ),                
-        .AD9361_txATT_CH0       ( AD9361_User_txATT_CH0_i     ),                  
-        .AD9361_txATT_CH1       ( AD9361_User_txATT_CH1_i     ), 
-
-        .AD9361_Ctrl_Enable     ( AD9361_Ctrl_Enable    ),                  
-        .Rx_VcoDivider          ( Rx_VcoDivider         ),              
-        .Tx_VcoDivider          ( Tx_VcoDivider         ),              
-        .Rx_FreqInteger         ( Rx_FreqInteger        ),              
-        .Rx_FreqFractional      ( Rx_FreqFractional     ),                  
-        .Tx_FreqInteger         ( Tx_FreqInteger        ),              
-        .Tx_FreqFractional      ( Tx_FreqFractional     ),
-        
-        .TX_ATT_Valid           ( TX_ATT_Valid          ),
-        .Tx0_ATT_data           ( Tx0_ATT_data          ),
-        .Tx1_ATT_data           ( Tx1_ATT_data          )                           
+    .clk                                (AD9361_UserClk_40M_i      ),
+    .rst                                (AD9361_UserClk_40M_rst_i  ),
+    
+    .AD9361_Valid                       (AD9361_User_Valid_i       ),
+    .AD9361_LoFreq_Rx                   (AD9361_User_LoFreq_Rx_i   ),
+    .AD9361_LoFreq_Tx                   (AD9361_User_LoFreq_Tx_i   ),
+    .AD9361_rxGain_CH0                  (AD9361_User_rxGain_CH0_i  ),
+    .AD9361_rxGain_CH1                  (AD9361_User_rxGain_CH1_i  ),
+    
+    .AD9361_txATT_Valid                 (AD9361_User_txATT_Valid_i ),
+    .AD9361_txATT_CH0                   (AD9361_User_txATT_CH0_i   ),
+    .AD9361_txATT_CH1                   (AD9361_User_txATT_CH1_i   ),
+    
+    .AD9361_Ctrl_Enable                 (AD9361_Ctrl_Enable        ),
+    .Rx_VcoDivider                      (Rx_VcoDivider             ),
+    .Tx_VcoDivider                      (Tx_VcoDivider             ),
+    .Rx_FreqInteger                     (Rx_FreqInteger            ),
+    .Rx_FreqFractional                  (Rx_FreqFractional         ),
+    .Tx_FreqInteger                     (Tx_FreqInteger            ),
+    .Tx_FreqFractional                  (Tx_FreqFractional         ),
+    
+    .TX_ATT_Valid                       (TX_ATT_Valid              ),
+    .Tx0_ATT_data                       (Tx0_ATT_data              ),
+    .Tx1_ATT_data                       (Tx1_ATT_data              ) 
     );
 
 
