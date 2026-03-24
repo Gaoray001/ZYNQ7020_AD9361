@@ -50,22 +50,28 @@ module AD9361_Top(
     input           i_fmc_spi_miso      ,
 //usr_Interface 
     input  wire    AD9361_UserClk_40M_i       ,
-    input  wire    ad_9361_data_clk_40mhz_rst ,
+    input  wire    AD9361_UserClk_40M_rst_i   ,
+    
+    
+    
     output         AD9361_clk_40Mhz           ,
     output         AD9361_rx_data_clk_160Mhz  ,
     output         AD9361_rst                 ,
+
+
+
 //usr_Ctrl_Interface 
-    input           AD9361_Valid        ,       //AD9361接口控制触发标志
-    input [31:0]    AD9361_LoFreq_Rx    ,       //AD9361接口控制-接收本振   KHz
-    input [31:0]    AD9361_LoFreq_Tx    ,       //AD9361接口控制-发送本振   KHz
-    input [15:0]    AD9361_rxGain_CH0   ,       //AD9361接口控制-接收增益通道0
-    input [15:0]    AD9361_rxGain_CH1   ,       //AD9361接口控制-接收增益通道1
+    input           AD9361_User_Valid_i        ,       //AD9361接口控制触发标志
+    input [31:0]    AD9361_User_LoFreq_Rx_i    ,       //AD9361接口控制-接收本振   KHz
+    input [31:0]    AD9361_User_LoFreq_Tx_i    ,       //AD9361接口控制-发送本振   KHz
+    input [15:0]    AD9361_User_rxGain_CH0_i   ,       //AD9361接口控制-接收增益通道0
+    input [15:0]    AD9361_User_rxGain_CH1_i   ,       //AD9361接口控制-接收增益通道1
     // input [15:0]    AD9361_txATT_CH0    ,    //AD9361接口控制-发送衰减通道0  db
     // input [15:0]    AD9361_txATT_CH1    ,    //AD9361接口控制-发送衰减通道1  db
 
-    input           AD9361_txATT_Valid  ,
-    input [15:0]    AD9361_txATT_CH0    ,       //AD9361接口控制-发送衰减通道0  db
-    input [15:0]    AD9361_txATT_CH1    ,       //AD9361接口控制-发送衰减通道1  db
+    input           AD9361_User_txATT_Valid_i  ,
+    input [15:0]    AD9361_User_txATT_CH0_i    ,       //AD9361接口控制-发送衰减通道0  db
+    input [15:0]    AD9361_User_txATT_CH1_i    ,       //AD9361接口控制-发送衰减通道1  db
 
 //usr_Data_Interface 
     output [31:0]   AD9361_Data_Rx_SYNC_CH1,
@@ -323,17 +329,17 @@ module AD9361_Top(
         
     AD9361_InterFace u_AD9361_InterFace(
         .clk                    ( AD9361_UserClk_40M_i          ),      
-        .rst                    ( ad_9361_data_clk_40mhz_rst         ),   
+        .rst                    ( AD9361_UserClk_40M_rst_i         ),   
 
-        .AD9361_Valid           ( AD9361_Valid          ),              
-        .AD9361_LoFreq_Rx       ( AD9361_LoFreq_Rx      ),                  
-        .AD9361_LoFreq_Tx       ( AD9361_LoFreq_Tx      ),                  
-        .AD9361_rxGain_CH0      ( AD9361_rxGain_CH0     ),                  
-        .AD9361_rxGain_CH1      ( AD9361_rxGain_CH1     ),                  
+        .AD9361_Valid           (AD9361_User_Valid_i          ),              
+        .AD9361_LoFreq_Rx       (AD9361_User_LoFreq_Rx_i      ),                  
+        .AD9361_LoFreq_Tx       (AD9361_User_LoFreq_Tx_i      ),                  
+        .AD9361_rxGain_CH0      (AD9361_User_rxGain_CH0_i     ),                  
+        .AD9361_rxGain_CH1      (AD9361_User_rxGain_CH1_i     ),                  
 
-        .AD9361_txATT_Valid     ( AD9361_txATT_Valid    ),                
-        .AD9361_txATT_CH0       ( AD9361_txATT_CH0      ),                  
-        .AD9361_txATT_CH1       ( AD9361_txATT_CH1      ), 
+        .AD9361_txATT_Valid     ( AD9361_User_txATT_Valid_i   ),                
+        .AD9361_txATT_CH0       ( AD9361_User_txATT_CH0_i     ),                  
+        .AD9361_txATT_CH1       ( AD9361_User_txATT_CH1_i     ), 
 
         .AD9361_Ctrl_Enable     ( AD9361_Ctrl_Enable    ),                  
         .Rx_VcoDivider          ( Rx_VcoDivider         ),              

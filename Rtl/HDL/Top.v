@@ -71,7 +71,7 @@ module Top (
     wire gb_rst; 
     assign gb_rst = 1'b0;
     
-    wire ad_9361_data_clk_40mhz;
+    wire AD9361_UserClk_40M;
     wire g_clock_mmcm_locked;
     wire mb_clock;
     g_clock_mmcm g_clock_mmcm (
@@ -79,10 +79,10 @@ module Top (
     .reset                              (gb_rst                    ),//i
     .locked                             (g_clock_mmcm_locked       ),//o
     .clk_out1                           (mb_clock                  ),//o 100MHz
-    .clk_out2                           (ad_9361_data_clk_40mhz    ) //o 40MHz
+    .clk_out2                           (AD9361_UserClk_40M    ) //o 40MHz
     // .clk_out2 ( dly_clock           ) //o 200MHz
     );
-
+assign AD9361_UserClk_40M_rst =  ~g_clock_mmcm_locked  ;
 
 
     // ==========================================
@@ -110,7 +110,7 @@ module Top (
 
 
     vio_0 your_instance_name (
-    .clk                                (ad_9361_data_clk_40mhz          ),// input wire clk
+    .clk                                (AD9361_UserClk_40M          ),// input wire clk
     .probe_out0                         (AD9361_Valid              ),// output wire [0 : 0] probe_out0
     .probe_out1                         (AD9361_LoFreq_Tx          ),// output wire [31 : 0] probe_out1
     .probe_out2                         (AD9361_LoFreq_Rx          ),// output wire [31 : 0] probe_out2
@@ -145,37 +145,38 @@ module Top (
     .o_fmc_spi_mosi                     (o_fmc_spi_mosi            ),
     .i_fmc_spi_miso                     (i_fmc_spi_miso            ),
     // usr_Interface
-    .AD9361_UserClk_40M_i               (ad_9361_data_clk_40mhz   ),//i
-    .ad_9361_data_clk_40mhz_rst         (~g_clock_mmcm_locked       ),//i
-    .AD9361_clk_40Mhz                   (AD9361_clk_40Mhz          ),//o
-    .AD9361_rst                         (AD9361_rst                ),//o
+    .AD9361_UserClk_40M_i               (AD9361_UserClk_40M   ),//i
+    .AD9361_UserClk_40M_rst_i           (AD9361_UserClk_40M_rst     ),//i
     
-    .AD9361_rx_data_clk_160Mhz          (AD9361_rx_data_clk_160Mhz ),
+    // .AD9361_clk_40Mhz                   (AD9361_clk_40Mhz          ),//o
+    // .AD9361_rst                         (AD9361_rst                ),//o
+    
+    // .AD9361_rx_data_clk_160Mhz          (AD9361_rx_data_clk_160Mhz ),
 
     // usr_Ctrl_Interface
-    .AD9361_Valid                       (AD9361_Valid              ),
-    .AD9361_LoFreq_Rx                   (AD9361_LoFreq_Rx          ),
-    .AD9361_LoFreq_Tx                   (AD9361_LoFreq_Tx          ),
-    .AD9361_rxGain_CH0                  (AD9361_rxGain_CH0         ),
-    .AD9361_rxGain_CH1                  (AD9361_rxGain_CH1         ),
-    .AD9361_txATT_Valid                 (AD9361_txATT_Valid        ),
-    .AD9361_txATT_CH0                   (AD9361_txATT_CH0          ),
-    .AD9361_txATT_CH1                   (AD9361_txATT_CH1          ),
+    .AD9361_User_Valid_i                       (AD9361_Valid              ),
+    .AD9361_User_LoFreq_Rx_i                   (AD9361_LoFreq_Rx          ),
+    .AD9361_User_LoFreq_Tx_i                   (AD9361_LoFreq_Tx          ),
+    .AD9361_User_rxGain_CH0_i                  (AD9361_rxGain_CH0         ),
+    .AD9361_User_rxGain_CH1_i                  (AD9361_rxGain_CH1         ),
+    .AD9361_User_txATT_Valid_i                 (AD9361_txATT_Valid        ),
+    .AD9361_User_txATT_CH0_i                   (AD9361_txATT_CH0          ),
+    .AD9361_User_txATT_CH1_i                   (AD9361_txATT_CH1          ),
     // usr_Data_Interface
-    .AD9361_Data_Rx_SYNC_CH1            (AD9361_Data_Rx_SYNC_CH1   ),
-    .AD9361_Data_Rx_SYNC_CH2            (AD9361_Data_Rx_SYNC_CH2   ),
-    .AD9361_Data_Tx_SYNC_CH1            (AD9361_Data_Tx_SYNC_CH1   ),
-    .AD9361_Data_Tx_SYNC_CH2            (AD9361_Data_Tx_SYNC_CH2   ) 
+    .AD9361_User_Data_RxSYNC_CH1_o            (AD9361_Data_Rx_SYNC_CH1   ),
+    .AD9361_User_Data_RxSYNC_CH2_o            (AD9361_Data_Rx_SYNC_CH2   ),
+    .AD9361_User_Data_TxSYNC_CH1_i            (AD9361_Data_Tx_SYNC_CH1   ),
+    .AD9361_User_Data_TxSYNC_CH2_i            (AD9361_Data_Tx_SYNC_CH2   ) 
     );
 
     assign AD9361_Data_Tx_SYNC_CH1 = 32'h03FF_0000 ;
     assign AD9361_Data_Tx_SYNC_CH2 = 32'h03FF_0000 ;
 
-    assign trx_clock = ad_9361_data_clk_40mhz;
+    assign trx_clock = AD9361_UserClk_40M;
     assign trx_rst   = ~g_clock_mmcm_locked      ;
 
     ila_64Xbit ila_rx_ad (
-	.clk(ad_9361_data_clk_40mhz), // input wire clk
+	.clk(AD9361_UserClk_40M), // input wire clk
 
 	.probe0({
         AD9361_Data_Rx_SYNC_CH1,
