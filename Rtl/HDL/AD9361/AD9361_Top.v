@@ -48,7 +48,7 @@ module AD9361_Top(
     output          o_fmc_spi_clk       ,
     output          o_fmc_spi_mosi      ,
     input           i_fmc_spi_miso      ,
-    
+
 //usr_Interface 
     input  wire    AD9361_UserClk_40M_i       ,
     input  wire    AD9361_UserClk_40M_rst_i   ,
@@ -81,21 +81,28 @@ module AD9361_Top(
     wire clk_200M;
     wire clk_50M;
     wire AD_rstn;
-    AD_CLK_PLL AD_CLK_PLL
-    (
-    .clk_in1     (clk_in                    ),// Clock in ports
+    // AD_CLK_PLL AD_CLK_PLL
+    // (
+    // .clk_in1     (clk_in                    ),// Clock in ports
     
-    .resetn      (rst_n_in                  ),// input resetn
-    .locked      (AD_rstn                   ),// output locked
+    // .resetn      (rst_n_in                  ),// input resetn
+    // .locked      (AD_rstn                   ),// output locked
     
-    .clk_out1    (                          ),// output clk_out1
-    .clk_out2    (clk_48M                   ),// output clk_out2
-    .clk_out3    (clk_10M                   ),// output clk_out3
-    .clk_out4    (clk_200M                  ),// output clk_out4
-    .clk_out5    (                          ) // output clk_out5
+    // .clk_out1    (                          ),// output clk_out1
+    // .clk_out2    (clk_48M                   ),// output clk_out2
+    // .clk_out3    (clk_10M                   ),// output clk_out3
+    // .clk_out4    (clk_200M                  ),// output clk_out4
+    // .clk_out5    (                          ) // output clk_out5
+    // );
+
+    AD_CLK_PLL_PRIM u_ad_clk_pll (
+    .clk_in                             (clk_in                    ),
+    .rst_n_in                           (rst_n_in                  ),
+    .clk_48M                            (clk_48M                   ),
+    .clk_200M                           (clk_200M                  ),
+    .clk_10M                            (clk_10M                   ),
+    .locked                             (AD_rstn                    ) 
     );
-
-
 
 
     wire l_clk;
